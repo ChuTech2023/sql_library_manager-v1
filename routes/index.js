@@ -11,7 +11,7 @@ router.get('/', async function(req, res, next) {
     console.log(dbData)
     res.json(dbData)
   } catch (error) {
-    
+    next(error)
   }
 });
 
