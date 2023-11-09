@@ -4,10 +4,18 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const models = require('./models');
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+//db sync
+models.sequelize.sync()
+.then(() => models.sequelize.authenticate())
+.then(() => console.log("db connected"))
+.catch( (err) => console.log(err))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
