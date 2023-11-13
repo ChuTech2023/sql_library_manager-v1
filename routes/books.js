@@ -6,34 +6,43 @@ const {Book} = require('../models')
 router.get('/', async function(req, res, next) {
   try {
     const books = await Book.findAll()
-    res.json(books)
+    res.render('index', {books, title: "Book List"})
   } catch (error) {
     next(error)
   }
 });
 
+// show page with form
 router.get('/new', function(req,res, next){
-    res.render('new-book')
+    res.render('new-book', {title: "New Book"})
 })
 
+//Add new book to database
 router.post('/new', async(req,res,next) => {
     try {
         const newBook = await Book.create(req.body)
         res.redirect('/books')
     } catch (error) {
-        next(error)
+        if (error.name === "SequelizeValidationError") {
+            res.render('new-book', {title: "New Book", error: error.errors}) 
+        } else {
+            next(error)
+        }
+        
     }
 })
 
+//Shows book details
 router.get('/:id', async function (req, res, next){
     try {
        const book = await Book.findByPk(req.params.id) 
-       res.render('update_book', {book})
+       res.render('update-book', {book, title: book.title})
     } catch (error) {
         next(error)
     }
 })
 
+//Update books
 router.post('/:id', async (req, res, next) => {
     try {
         const updatedBook = await Book.update(req.body, {
@@ -49,10 +58,17 @@ router.post('/:id', async (req, res, next) => {
         }
         res.redirect('/books')
     } catch (error) {
-        next(error)
+        if (error.name === "SequelizeValidationError") {
+            let book = await Book.build(req.body)
+            res.render('new-book', {book, title: "New Book", error: error.errors}) 
+        } else {
+            next(error)
+        }
+        
     }
 })
 
+//delete books
 router.post('/:id/delete', async (req, res, next) => {
     try {
         const deletedBook = await Book.destroy({
@@ -75,39 +91,3 @@ router.post('/:id/delete', async (req, res, next) => {
 
 module.exports = router;
 
-
-
-
-// Express Routes and CRUD Operations
-// You'll often wire Express routes to your SQL-based database via Sequelize ORM. The following demonstrates how you might use Sequelize within an Express application to perform CRUD operations:
-
-// const { Router } = require('express');
-// const { Movie } = require('../models');
-
-// const router = new Router();
-
-// /* POST create movie */
-// router.post('/', async (req, res, next) => {
-//   const movie = await Movie.create(req.body);
-//   res.redirect('/movies/' + movie.id);
-// });
-
-// /* GET / retrieve movie to update */
-// router.get('/:id/edit', async (req, res, next) => {
-//   const movie = await Movie.findByPk(req.params.id);
-//   res.render('movies/edit', { movie, title: 'Edit Movie' });
-// });
-
-// /* PUT update movie */
-// router.put('/:id', async (req, res, next) => {
-//   const movie = await Movie.findByPk(req.params.id);
-//   await movie.update(req.body);
-//   res.redirect('/movies/' + movie.id);
-// });
-
-// /* Delete movie */
-// router.post('/movies/:id/delete', async (req, res) => {
-//   const movieToDelete = await Movie.findByPk(req.params.id);
-//   await movieToDelete.destroy();
-//   res.redirect('/movies');
-// });
