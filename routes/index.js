@@ -5,14 +5,15 @@ const {Book} = require('../models')
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
+  res.redirect("/books")
   //res.render('index', { title: 'Express' });
-  try {
-    const dbData = await Book.findAll()
-    console.log(dbData)
-    res.json(dbData)
-  } catch (error) {
-    next(error)
-  }
+  // try {
+  //   const dbData = await Book.findAll()
+  //   console.log(dbData)
+  //   res.json(dbData)
+  // } catch (error) {
+  //   next(error)
+  // }
 });
 
 module.exports = router;
