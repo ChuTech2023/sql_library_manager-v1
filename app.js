@@ -37,7 +37,7 @@ app.use(function(req, res, next) {
   const err = new Error()
   err.status = 404
   err.message = "Page Not Found"
-  res.render("page_not_found", {error:err})
+  res.render("page-not-found", {error:err})
   
   next(err);
 });
