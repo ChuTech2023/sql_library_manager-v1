@@ -60,13 +60,18 @@ router.post('/:id', async (req, res, next) => {
             const err = new Error("No Book Found.")
             err.status = 404
             next(err)
-            return
+            return;
         }
         res.redirect('/books')
     } catch (error) {
         if (error.name === "SequelizeValidationError") {
-            let book = await Book.build(req.body)
-            res.render('update-book', { book, title: "Update Book", error: error.errors })
+            let book = await Book.build(req.body);
+            console.log(req.params.id);
+            book.id = req.params.id;
+            res.render('update-book', { 
+                book, 
+                title: "Update Book", 
+                error: error.errors })
         } else {
             next(error)
         }
